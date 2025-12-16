@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager of Managers™ | Центр управления продуктивностью</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Глобальные стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+        
+        /* Контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+        
+        /* Заголовок */
+        .hero-section {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.7) 100%);
+            border-bottom: 1px solid rgba(100, 116, 139, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #60a5fa 0%, #38bdf8 50%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .title::after {
+            content: '™';
+            font-size: 1.5rem;
+            vertical-align: super;
+            margin-left: 5px;
+            color: #38bdf8;
+        }
+        
+        .subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-weight: 300;
+        }
+        
+        /* Панель управления */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 50px 20px;
+        }
+        
+        /* Карточки менеджеров */
+        .manager-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .manager-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+                        0 0 0 1px rgba(56, 189, 248, 0.1);
+        }
+        
+        .manager-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
+        }
+        
+        .manager-card.rest-card::before {
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #38bdf8;
+        }
+        
+        .rest-card .card-icon {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+        
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+        
+        .card-description {
+            color: #94a3b8;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+        }
+        
+        /* Кнопки */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn::after {
+            content: '→';
+            margin-left: 5px;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Статистика */
+        .stats-section {
+            padding: 40px 20px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 20px;
+            margin: 30px auto;
+            max-width: 800px;
+            border: 1px solid rgba(100, 116, 139, 0.2);
+        }
+        
+        .stats-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 15px;
+            border: 1px solid rgba(100, 116, 139, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #60a5fa, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Шутка (серьёзная версия) */
+        .joke-section {
+            text-align: center;
+            padding: 40px 20px;
+            margin: 40px auto;
+            max-width: 600px;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            position: relative;
+        }
+        
+        .joke-section::before {
+            content: '⚠️';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .joke-text {
+            font-style: italic;
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .joke-subtext {
+            color: #8b5cf6;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        
+        /* Футер */
+        footer {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 30px 20px;
+            border-top: 1px solid rgba(100, 116, 139, 0.3);
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-text {
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .legal-note {
+            color: #475569;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            font-style: italic;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 30px 15px;
+            }
+            
+            .manager-card {
+                padding: 25px;
+            }
+            
+            .btn {
+                padding: 14px 24px;
+            }
+            
+            .hero-section {
+                padding: 40px 15px 30px;
+            }
+        }
+        
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .manager-card, .stats-section, .joke-section {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .manager-card:nth-child(1) { animation-delay: 0.1s; }
+        .manager-card:nth-child(2) { animation-delay: 0.2s; }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <header class="hero-section">
+        <h1 class="title">Manager of Managers</h1>
+        <p class="subtitle">Центр стратегического управления продуктивностью и балансом. Мета-уровень контроля над вашими инструментами эффективности.</p>
+      </header>
+
+      <main>
+        <div class="dashboard">
+          <div class="manager-card">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="fas fa-tasks"></i>
+              </div>
+              <h2 class="card-title">Операционный контроль</h2>
+            </div>
+            <p class="card-description">
+              Система тактического управления задачами и проектами. Реализация методологий GTD, Kanban и Agile подходов для достижения операционного превосходства.
+            </p>
+            <a href="/proizv_praktika/manage_tasks/" class="btn btn-primary">
+              <i class="fas fa-rocket"></i>
+              Перейти к управлению задачами
+            </a>
+          </div>
+          
+          <div class="manager-card rest-card">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="fas fa-brain"></i>
+              </div>
+              <h2 class="card-title">Ресурсный менеджмент</h2>
+            </div>
+            <p class="card-description">
+              Система восстановления когнитивных ресурсов и управления энергией. Оптимизация циклов работы и отдыха для устойчивой высокой продуктивности.
+            </p>
+            <a href="/proizv_praktika/rest_manager/" class="btn btn-secondary">
+              <i class="fas fa-heartbeat"></i>
+              Перейти к управлению ресурсами
+            </a>
+          </div>
+        </div>
+
+        <div class="stats-section">
+          <h3 class="stats-title">Ключевые метрики системы</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value">∞</div>
+              <div class="stat-label">Уровень управления</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">100%</div>
+              <div class="stat-label">Серьёзность намерений</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">42</div>
+              <div class="stat-label">Ответ на все вопросы</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">24/7</div>
+              <div class="stat-label">Доступность системы</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="joke-section">
+          <p class="joke-text">
+            "Менеджер для менеджеров" в настоящее время проходит этап концептуальной верификации на блокчейне мета-продуктивности. Релиз запланирован на Q4 2050 после завершения квантовых вычислений.
+          </p>
+          <p class="joke-subtext">
+            Примечание: Серьёзность данного раздела обратно пропорциональна необходимости его существования
+          </p>
+        </div>
+      </main>
+    </div>
+    
+    <footer>
+      <div class="footer-content">
+        <p class="footer-text">
+          © 2050 MetaProductivity Systems™. Все права на неправа защищены. 
+          Система сертифицирована по стандартам ISO-9001 (Meta Edition).
+        </p>
+        <p class="legal-note">
+          Disclaimer: Никакие менеджеры не пострадали при создании этой системы. 
+          Продуктивность может вызывать привыкание. Используйте ответственно.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
