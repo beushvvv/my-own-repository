@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Менеджер отдыха</title>
+    <style>
+        /* Базовые стили, аналогичные менеджеру задач */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #0288d1;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 {
+            color: #0288d1;
+            margin: 20px 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #4fc3f7;
+        }
+        
+        .timer-display {
+            font-size: 4rem;
+            text-align: center;
+            font-weight: bold;
+            color: #0288d1;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timer-controls, .timer-settings, .reminder-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #0288d1;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background: #0277bd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(2, 135, 209, 0.3);
+        }
+        
+        button:disabled {
+            background: #b0bec5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        input[type="text"], input[type="number"] {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #0288d1;
+            outline: none;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group input {
+            flex: 1;
+        }
+        
+        .reminder-list {
+            background: #f1f8e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .reminder-list p {
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .task-list {
+            list-style: none;
+        }
+        
+        .task-list li {
+            background: #f5f5f5;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .task-list li:hover {
+            background: #e0f2f1;
+            transform: translateX(5px);
+        }
+        
+        .delete-btn {
+            background: #ef5350;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+        
+        #timerStatus {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f5f5f5;
+        }
+        
+        .nav-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #0288d1;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #0288d1;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: #0288d1;
+            color: white;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-couch"></i> Менеджер отдыха</h1>
+        <p>Баланс между работой и отдыхом — залог продуктивности.</p>
+        
+        <a href="../manage_tasks/" class="nav-link">
+            <i class="fas fa-tasks"></i> Перейти к менеджеру задач
+        </a>
+
+        <!-- Секция 1: Таймер Pomodoro -->
+        <div class="card">
+            <h2><i class="fas fa-clock"></i> Таймер для перерывов</h2>
+            <div class="timer-display" id="timer">25:00</div>
+            <div class="timer-controls">
+                <button onclick="startTimer()" id="startBtn">
+                    <i class="fas fa-play"></i> Старт
+                </button>
+                <button onclick="pauseTimer()" id="pauseBtn" disabled>
+                    <i class="fas fa-pause"></i> Пауза
+                </button>
+                <button onclick="resetTimer()">
+                    <i class="fas fa-redo"></i> Сброс
+                </button>
+            </div>
+            <div class="timer-settings">
+                <label>Работа: 
+                    <input type="number" id="workTime" value="25" min="1" max="60"> мин.
+                </label>
+                <label>Отдых: 
+                    <input type="number" id="breakTime" value="5" min="1" max="30"> мин.
+                </label>
+                <button onclick="applySettings()">
+                    <i class="fas fa-check"></i> Применить
+                </button>
+            </div>
+            <p id="timerStatus">Готово к работе. Нажмите "Старт".</p>
+        </div>
+
+        <!-- Секция 2: Напоминания -->
+        <div class="card">
+            <h2><i class="fas fa-bell"></i> Напоминания об отдыхе</h2>
+            <div class="reminder-controls">
+                <button onclick="toggleReminders()" id="reminderToggle">
+                    <i class="fas fa-bell-slash"></i> Включить напоминания
+                </button>
+                <label>Интервал: 
+                    <input type="number" id="reminderInterval" value="60" min="5" max="180"> мин.
+                </label>
+            </div>
+            <div class="reminder-list">
+                <p><i class="fas fa-walking"></i> Встаньте и пройдитесь 2-3 минуты</p>
+                <p><i class="fas fa-eye"></i> Посмотрите вдаль 20 секунд</p>
+                <p><i class="fas fa-glass-cheers"></i> Выпейте стакан воды</p>
+                <p><i class="fas fa-wind"></i> Сделайте 5 глубоких вдохов</p>
+                <p><i class="fas fa-stretch"></i> Потянитесь и разомните шею</p>
+            </div>
+        </div>
+
+        <!-- Секция 3: Идеи для отдыха -->
+        <div class="card">
+            <h2><i class="fas fa-lightbulb"></i> Идеи для отдыха</h2>
+            <div class="input-group">
+                <input type="text" id="restIdeaInput" 
+                       placeholder="Например: Прогулка в парке, 15 минут медитации...">
+                <button onclick="addRestIdea()">
+                    <i class="fas fa-plus"></i> Добавить
+                </button>
+            </div>
+            <ul class="task-list" id="restIdeasList">
+                <!-- Идеи будут добавляться сюда -->
+            </ul>
+        </div>
+
+        <!-- Секция 4: Статистика -->
+        <div class="card">
+            <h2><i class="fas fa-chart-bar"></i> Статистика отдыха</h2>
+            <p>Сегодня вы посвятили отдыху: 
+                <strong id="todayBreakTime">0 минут</strong>
+            </p>
+            <p>Завершено рабочих сессий: 
+                <strong id="sessionsCompleted">0</strong>
+            </p>
+            <button onclick="resetStats()">
+                <i class="fas fa-trash-alt"></i> Сбросить статистику за день
+            </button>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
