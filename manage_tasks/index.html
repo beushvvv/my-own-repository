@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Менеджер задач</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .add-task-form {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .add-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .tasks-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .priority-high::before { background: rgba(255, 71, 87, 0.6); }
+        .priority-medium::before { background: rgba(255, 165, 2, 0.6); }
+        .priority-low::before { background: rgba(46, 213, 115, 0.6); }
+
+        .deadline-warning::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: rgba(255, 71, 87, 0.6);
+        }
+
+        .deadline-critical::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #ff4757;
+        }
+
+        .task-completed {
+            opacity: 0.7;
+            background: #f8f9fa;
+        }
+
+        .task-completed .task-title {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .task-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid #e1e5e9;
+        }
+
+        .task-image.fallback {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .task-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50; /* Темно-синий для лучшей читаемости */
+            flex: 1;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .task-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .category-work { background: rgba(227, 242, 253, 0.6); color: #1976d2; }
+        .category-personal { background: rgba(243, 229, 245, 0.6); color: #7b1fa2; }
+        .category-health { background: rgba(232, 245, 232, 0.6); color: #388e3c; }
+        .category-education { background: rgba(255, 243, 224, 0.6); color: #f57c00; }
+
+        .task-priority {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 500;
+            color: white;
+        }
+
+        .priority-high { background: rgba(255, 71, 87, 0.6); }
+        .priority-medium { background: rgba(255, 165, 2, 0.6); }
+        .priority-low { background: rgba(46, 213, 115, 0.6); }
+
+        .task-deadline {
+            font-size: 0.9em;
+            color: #2c3e50; /* Темно-синий для лучшей читаемости */
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500; /* Средняя жирность для лучшей видимости */
+        }
+
+        .task-progress-text {
+            font-size: 0.9em;
+            color: #2c3e50; /* Темно-синий для лучшей читаемости */
+            font-weight: 600; /* Полужирный для лучшей видимости */
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #e1e5e9;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, rgba(76, 175, 80, 0.6), rgba(69, 160, 73, 0.6));
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-percentage {
+            text-align: right;
+            font-size: 0.9em;
+            color: #2c3e50; /* Темно-синий для лучшей читаемости */
+            font-weight: 600; /* Полужирный для лучшей видимости */
+        }
+
+        .task-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .increment-btn {
+            background: rgba(76, 175, 80, 0.7);
+            color: white;
+        }
+
+        .increment-btn:hover {
+            background: #45a049;
+        }
+
+        .decrement-btn {
+            background: rgba(255, 107, 107, 0.7);
+            color: white;
+        }
+
+        .decrement-btn:hover {
+            background: #ff5252;
+        }
+
+        .delete-btn {
+            background: rgba(255, 71, 87, 0.7);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #ff3742;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: white;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+
+        /* Новые стили для срочных задач */
+        .priority-urgent::before { background: #ff0000; }
+        .priority-urgent { background: rgba(255, 0, 0, 0.1); border: 2px solid #ff0000; }
+
+        /* Стили для модального окна редактирования */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .edit-btn {
+            background: rgba(74, 144, 226, 0.7);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #2d8cff;
+        }
+
+        /* Адаптивность для мобильных устройств */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                min-width: 100%;
+            }
+
+            .task-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+            
+            .task-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .task-meta {
+                justify-content: center;
+            }
+
+            .task-image {
+                width: 60px;
+                height: 60px;
+            }
+
+            .task-controls {
+                justify-content: center;
+            }
+
+            .control-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .task-controls {
+                flex-direction: column;
+            }
+
+            .control-btn {
+                width: 100%;
+            }
+
+            .task-meta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .add-task-form {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../rest_manager/" style="display: inline-block; margin: 10px; padding: 10px 20px; background: #0288d1; color: white; text-decoration: none; border-radius: 5px;">
+            <i class="fas fa-couch"></i> Перейти в менеджер отдыха
+            </a>
+            <h1>📋 Менеджер задач</h1>
+            <p>Отслеживайте прогресс по вашим задачам в реальном времени</p>
+            <p style="font-size: 0.9em; opacity: 0.8; margin-top: 5px; color: rgba(255,255,255,0.9);">
+                💡 Не забывайте периодически экспортировать данные для создания резервных копий
+            </p>
+            <div class="header-actions">
+                <button class="action-btn" onclick="taskManager.exportData()">📤 Экспорт данных</button>
+                <button class="action-btn" onclick="taskManager.importData()">📥 Импорт данных</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Общий прогресс</h3>
+                <div class="stat-value" id="totalProgress">0%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Всего задач</h3>
+                <div class="stat-value" id="totalTasks">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Выполнено</h3>
+                <div class="stat-value" id="completedTasks">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Активных</h3>
+                <div class="stat-value" id="activeTasks">0</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="filterCategory">Категория</label>
+                <select id="filterCategory" class="filter-select">
+                    <option value="all">Все категории</option>
+                    <option value="work">Работа</option>
+                    <option value="personal">Личное</option>
+                    <option value="health">Здоровье</option>
+                    <option value="education">Обучение</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="filterPriority">Приоритет</label>
+                <select id="filterPriority" class="filter-select">
+                    <option value="all">Все приоритеты</option>
+                    <option value="high">Высокий</option>
+                    <option value="medium">Средний</option>
+                    <option value="low">Низкий</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="sortBy">Сортировка</label>
+                <select id="sortBy" class="filter-select">
+                    <option value="priority">По приоритету</option>
+                    <option value="newest">Сначала новые</option>
+                    <option value="oldest">Сначала старые</option>
+                    <option value="progress">По прогрессу</option>
+                    <option value="deadline">По сроку</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filterDeadline">Срок выполнения</label>
+                <select id="filterDeadline" class="filter-select">
+                    <option value="all">Все сроки</option>
+                    <option value="today">Сегодня</option>
+                    <option value="week">Эта неделя</option>
+                    <option value="overdue">Просроченные</option>
+                </select>
+            </div>
+        </div>
+
+        <form class="add-task-form" id="taskForm">
+            <div class="form-group">
+                <label for="taskName">Название задачи</label>
+                <input type="text" id="taskName" placeholder="Введите название задачи" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="taskCategory">Категория</label>
+                    <select id="taskCategory" required>
+                        <option value="work">Работа</option>
+                        <option value="personal">Личное</option>
+                        <option value="health">Здоровье</option>
+                        <option value="education">Обучение</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskPriority">Приоритет</label>
+                    <select id="taskPriority" required>
+                        <option value="low">Низкий</option>
+                        <option value="medium" selected>Средний</option>
+                        <option value="high">Высокий</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="taskImage">Ссылка на картинку</label>
+                    <input type="url" id="taskImage" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="totalStages">Всего этапов</label>
+                    <input type="number" id="totalStages" placeholder="6" min="1" max="100" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="taskDeadline">Срок выполнения</label>
+                <input type="date" id="taskDeadline">
+            </div>
+            
+            <button type="submit" class="add-btn" id="addBtn">Добавить задачу</button>
+        </form>
+
+        <div class="tasks-container" id="tasksContainer">
+            <div class="empty-state" id="emptyState">
+                📝 Пока нет задач. Добавьте первую задачу!
+            </div>
+        </div>
+
+        <!-- Модальное окно редактирования -->
+        <div class="edit-modal" id="editModal">
+            <div class="edit-modal-content">
+                <h3 style="margin-bottom: 20px;">Редактировать задачу</h3>
+                <form id="editTaskForm">
+                    <div class="form-group">
+                        <label for="editTaskName">Название задачи</label>
+                        <input type="text" id="editTaskName" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editTaskCategory">Категория</label>
+                            <select id="editTaskCategory" required>
+                                <option value="work">Работа</option>
+                                <option value="personal">Личное</option>
+                                <option value="health">Здоровье</option>
+                                <option value="education">Обучение</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTaskPriority">Приоритет</label>
+                            <select id="editTaskPriority" required>
+                                <option value="low">Низкий</option>
+                                <option value="medium">Средний</option>
+                                <option value="high">Высокий</option>
+                                <option value="urgent">Наивысший</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTaskImage">Ссылка на картинку</label>
+                        <input type="url" id="editTaskImage" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label for="editTaskDeadline">Срок выполнения</label>
+                        <input type="date" id="editTaskDeadline">
+                    </div>
+                    <div class="form-row" style="margin-top: 20px;">
+                        <button type="button" class="control-btn" onclick="taskManager.closeEditModal()" style="background: #6c757d;">Отмена</button>
+                        <button type="submit" class="control-btn" style="background: #4CAF50;">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TaskManager {
+            constructor() {
+                this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                this.maxTasks = 20;
+                this.editingTaskId = null;
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.renderTasks();
+                this.updateStats();
+                
+                // Устанавливаем минимальную дату для дедлайна
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('taskDeadline').min = today;
+                document.getElementById('editTaskDeadline').min = today; // Добавь эту строку
+
+                // Обработчик формы редактирования - добавь этот блок
+                document.getElementById('editTaskForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveTaskChanges();
+                });
+
+                // Закрытие модального окна по клику вне его - добавь этот блок
+                document.getElementById('editModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'editModal') {
+                        this.closeEditModal();
+                    }
+                });
+            }
+
+            bindEvents() {
+                document.getElementById('taskForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addTask();
+                });
+
+                // События для фильтров
+                document.getElementById('filterCategory').addEventListener('change', () => this.renderTasks());
+                document.getElementById('filterPriority').addEventListener('change', () => this.renderTasks());
+                document.getElementById('sortBy').addEventListener('change', () => this.renderTasks());
+                document.getElementById('filterDeadline').addEventListener('change', () => this.renderTasks());
+            }
+
+            addTask() {
+                if (this.tasks.length >= this.maxTasks) {
+                    alert(`Максимальное количество задач: ${this.maxTasks}`);
+                    return;
+                }
+
+                const name = document.getElementById('taskName').value.trim();
+                const category = document.getElementById('taskCategory').value;
+                const priority = document.getElementById('taskPriority').value;
+                const image = document.getElementById('taskImage').value.trim();
+                const totalStages = parseInt(document.getElementById('totalStages').value);
+                const deadline = document.getElementById('taskDeadline').value;
+
+                if (!name) {
+                    alert('Введите название задачи');
+                    return;
+                }
+
+                // Определяем приоритет на основе дедлайна
+                let finalPriority = priority;
+                if (deadline) {
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    
+                    const deadlineDate = new Date(deadline);
+                    
+                    // Сравниваем даты (игнорируя время)
+                    if (deadlineDate.toDateString() === tomorrow.toDateString()) {
+                        finalPriority = 'urgent';
+                    }
+                }
+
+                const task = {
+                    id: Date.now(),
+                    name,
+                    category,
+                    priority: finalPriority, // Используем вычисленный приоритет
+                    image: image || null,
+                    completedStages: 0,
+                    totalStages,
+                    progress: 0,
+                    deadline: deadline || null,
+                    createdAt: new Date().toISOString()
+                };
+
+                this.tasks.push(task);
+                this.saveTasks();
+                this.renderTasks();
+                this.updateStats();
+                this.resetForm();
+            }
+
+            updateProgress(taskId, increment) {
+                const taskIndex = this.tasks.findIndex(t => t.id === taskId);
+                if (taskIndex === -1) return;
+
+                const task = this.tasks[taskIndex];
+                
+                if (increment) {
+                    if (task.completedStages < task.totalStages) {
+                        task.completedStages++;
+                    }
+                } else {
+                    if (task.completedStages > 0) {
+                        task.completedStages--;
+                    }
+                }
+
+                task.progress = (task.completedStages / task.totalStages) * 100;
+                this.tasks[taskIndex] = task;
+                this.saveTasks();
+                
+                this.updateTaskElement(taskId);
+                this.updateStats();
+                
+                if (task.progress === 100) {
+                    this.showCompletionNotification(task.name);
+                }
+            }
+
+            updateTaskElement(taskId) {
+                const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+                if (!taskElement) {
+                    this.renderTasks();
+                    return;
+                }
+
+                const task = this.tasks.find(t => t.id === taskId);
+                if (!task) return;
+
+                // Обновляем прогресс текстом
+                const progressText = taskElement.querySelector('.task-progress-text');
+                if (progressText) {
+                    progressText.textContent = `${task.completedStages}/${task.totalStages}`;
+                }
+
+                // Обновляем прогресс бар
+                const progressFill = taskElement.querySelector('.progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = `${task.progress}%`;
+                }
+
+                // Обновляем процент
+                const progressPercentage = taskElement.querySelector('.progress-percentage');
+                if (progressPercentage) {
+                    progressPercentage.textContent = `${Math.round(task.progress)}%`;
+                }
+
+                // Обновляем классы для завершенных задач
+                if (task.progress === 100) {
+                    taskElement.classList.add('task-completed');
+                } else {
+                    taskElement.classList.remove('task-completed');
+                }
+
+                // Обновляем кнопки
+                const incrementBtn = taskElement.querySelector('.increment-btn');
+                const decrementBtn = taskElement.querySelector('.decrement-btn');
+                
+                if (incrementBtn) {
+                    if (task.progress === 100) {
+                        incrementBtn.disabled = true;
+                        incrementBtn.style.opacity = '0.5';
+                        incrementBtn.style.cursor = 'not-allowed';
+                    } else {
+                        incrementBtn.disabled = false;
+                        incrementBtn.style.opacity = '1';
+                        incrementBtn.style.cursor = 'pointer';
+                    }
+                }
+
+                if (decrementBtn) {
+                    if (task.completedStages === 0) {
+                        decrementBtn.disabled = true;
+                        decrementBtn.style.opacity = '0.5';
+                        decrementBtn.style.cursor = 'not-allowed';
+                    } else {
+                        decrementBtn.disabled = false;
+                        decrementBtn.style.opacity = '1';
+                        decrementBtn.style.cursor = 'pointer';
+                    }
+                }
+
+                // Обновляем статус дедлайна
+                this.updateDeadlineStatus(taskElement, task);
+            }
+
+            updateDeadlineStatus(taskElement, task) {
+                // Удаляем старые классы дедлайнов
+                taskElement.classList.remove('deadline-warning', 'deadline-critical');
+                
+                // Добавляем новые классы если задача не завершена
+                if (task.progress < 100 && task.deadline) {
+                    const now = new Date();
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    const deadline = new Date(task.deadline);
+                    
+                    if (deadline < today) {
+                        taskElement.classList.add('deadline-critical');
+                    } else if ((deadline - today) / (1000 * 60 * 60 * 24) <= 3) {
+                        taskElement.classList.add('deadline-warning');
+                    }
+                }
+
+                // Обновляем текст дедлайна
+                const deadlineElement = taskElement.querySelector('.task-deadline');
+                if (deadlineElement) {
+                    const deadlineText = task.deadline 
+                        ? this.formatDeadline(task.deadline, task.progress)
+                        : 'Без срока';
+                    
+                    let completionStatus = '';
+                    if (task.progress === 100) {
+                        completionStatus = '<span style="color: #4CAF50; margin-left: 10px;">✅ Завершено</span>';
+                    }
+                    
+                    deadlineElement.innerHTML = `<span>📅 ${deadlineText}</span>${completionStatus}`;
+                }
+            }
+
+            deleteTask(taskId) {
+                if (confirm('Вы уверены, что хотите удалить эту задачу?')) {
+                    this.tasks = this.tasks.filter(t => t.id !== taskId);
+                    this.saveTasks();
+                    this.renderTasks();
+                    this.updateStats();
+                }
+            }
+
+            // Добавь после функции deleteTask()
+            openEditModal(taskId) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (!task) return;
+
+                document.getElementById('editTaskName').value = task.name;
+                document.getElementById('editTaskCategory').value = task.category;
+                document.getElementById('editTaskPriority').value = task.priority;
+                document.getElementById('editTaskImage').value = task.image || '';
+                document.getElementById('editTaskDeadline').value = task.deadline || '';
+
+                this.editingTaskId = taskId;
+                document.getElementById('editModal').style.display = 'flex';
+            }
+
+            closeEditModal() {
+                document.getElementById('editModal').style.display = 'none';
+                this.editingTaskId = null;
+            }
+
+            saveTaskChanges() {
+                if (!this.editingTaskId) return;
+
+                const taskIndex = this.tasks.findIndex(t => t.id === this.editingTaskId);
+                if (taskIndex === -1) return;
+
+                const task = this.tasks[taskIndex];
+                
+                task.name = document.getElementById('editTaskName').value.trim();
+                task.category = document.getElementById('editTaskCategory').value;
+                task.priority = document.getElementById('editTaskPriority').value;
+                task.image = document.getElementById('editTaskImage').value.trim() || null;
+                task.deadline = document.getElementById('editTaskDeadline').value || null;
+
+                this.checkDeadlineUrgency(task);
+
+                this.tasks[taskIndex] = task;
+                this.saveTasks();
+                this.renderTasks();
+                this.closeEditModal();
+            }
+
+            checkDeadlineUrgency(task) {
+                if (task.progress < 100 && task.deadline) {
+                    const now = new Date();
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    const deadline = new Date(task.deadline);
+                    const diffDays = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+
+                    if (diffDays <= 2 && diffDays >= 0) {
+                        task.priority = 'urgent';
+                    }
+                }
+            }
+
+            saveTasks() {
+                localStorage.setItem('tasks', JSON.stringify(this.tasks));
+            }
+
+            resetForm() {
+                document.getElementById('taskForm').reset();
+            }
+
+            getFilteredAndSortedTasks() {
+                const categoryFilter = document.getElementById('filterCategory').value;
+                const priorityFilter = document.getElementById('filterPriority').value;
+                const deadlineFilter = document.getElementById('filterDeadline').value;
+                const sortBy = document.getElementById('sortBy').value;
+
+                let filteredTasks = [...this.tasks];
+
+                // Фильтрация по категории
+                if (categoryFilter !== 'all') {
+                    filteredTasks = filteredTasks.filter(task => task.category === categoryFilter);
+                }
+
+                // Фильтрация по приоритету
+                if (priorityFilter !== 'all') {
+                    filteredTasks = filteredTasks.filter(task => task.priority === priorityFilter);
+                }
+
+                // Фильтрация по сроку выполнения
+                if (deadlineFilter !== 'all') {
+                    const now = new Date();
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    
+                    filteredTasks = filteredTasks.filter(task => {
+                        if (!task.deadline) return false;
+                        
+                        const taskDeadline = new Date(task.deadline);
+                        const taskDeadlineDate = new Date(taskDeadline.getFullYear(), taskDeadline.getMonth(), taskDeadline.getDate());
+                        
+                        switch(deadlineFilter) {
+                            case 'today':
+                                return taskDeadlineDate.getTime() === today.getTime();
+                            case 'week':
+                                const weekEnd = new Date(today);
+                                weekEnd.setDate(weekEnd.getDate() + 7);
+                                return taskDeadlineDate >= today && taskDeadlineDate <= weekEnd;
+                            case 'overdue':
+                                return taskDeadlineDate < today && task.progress < 100;
+                            default:
+                                return true;
+                        }
+                    });
+                }
+
+                // Сортировка
+                filteredTasks.sort((a, b) => {
+                    switch(sortBy) {
+                        case 'newest':
+                            return b.id - a.id;
+                        case 'oldest':
+                            return a.id - b.id;
+                        case 'progress':
+                            return b.progress - a.progress;
+                        case 'priority':
+                            const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+                            return priorityOrder[b.priority] - priorityOrder[a.priority];
+                        case 'deadline':
+                            if (!a.deadline && !b.deadline) return 0;
+                            if (!a.deadline) return 1;
+                            if (!b.deadline) return -1;
+                            return new Date(a.deadline) - new Date(b.deadline);
+                        default:
+                            return 0;
+                    }
+                });
+
+                return filteredTasks;
+            }
+
+            renderTasks() {
+                const container = document.getElementById('tasksContainer');
+                const filteredTasks = this.getFilteredAndSortedTasks();
+
+                // Очищаем контейнер
+                container.innerHTML = '';
+
+                if (filteredTasks.length === 0) {
+                    // Создаем новый emptyState элемент
+                    const emptyState = document.createElement('div');
+                    emptyState.className = 'empty-state';
+                    emptyState.id = 'emptyState';
+                    emptyState.textContent = '📝 Пока нет задач. Добавьте первую задачу!';
+                    container.appendChild(emptyState);
+                    return;
+                }
+
+                // Добавляем задачи
+                filteredTasks.forEach(task => {
+                    const taskElement = this.createTaskElement(task);
+                    container.appendChild(taskElement);
+                });
+            }
+
+            createTaskElement(task) {
+                const taskDiv = document.createElement('div');
+                
+                // Базовые классы
+                let taskClasses = ['task-card', `priority-${task.priority}`];
+                
+                // Добавляем класс для завершенных задач
+                if (task.progress === 100) {
+                    taskClasses.push('task-completed');
+                }
+                
+                // Проверяем срок выполнения (только для незавершенных задач)
+                this.updateDeadlineStatusForNewElement(taskDiv, task);
+                
+                taskDiv.className = taskClasses.join(' ');
+                taskDiv.setAttribute('data-task-id', task.id);
+
+                const deadlineText = task.deadline 
+                    ? this.formatDeadline(task.deadline, task.progress)
+                    : 'Без срока';
+
+                // Создаем HTML для изображения - УСЛОВНОЕ ОТОБРАЖЕНИЕ
+                let imageHtml = '';
+                if (task.image) {
+                    // Если есть ссылка на изображение, показываем его с fallback
+                    imageHtml = `
+                        <div class="task-image-container">
+                            <img src="${task.image}" alt="${task.name}" class="task-image" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="task-image fallback" style="display: none;">📋</div>
+                        </div>
+                    `;
+                } else {
+                    // Если нет ссылки, показываем только fallback
+                    imageHtml = `<div class="task-image fallback">📋</div>`;
+                }
+
+                taskDiv.innerHTML = `
+                    ${imageHtml}
+                    <div class="task-content">
+                        <div class="task-header">
+                            <h3 class="task-title">${task.name}</h3>
+                            <div class="task-meta">
+                                <span class="task-category category-${task.category}">
+                                    ${this.getCategoryName(task.category)}
+                                </span>
+                                <span class="task-priority priority-${task.priority}">
+                                    ${this.getPriorityName(task.priority)}
+                                </span>
+                                <span class="task-progress-text">${task.completedStages}/${task.totalStages}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="task-deadline">
+                            <span>📅 ${deadlineText}</span>
+                            ${task.progress === 100 ? '<span style="color: #4CAF50; margin-left: 10px;">✅ Завершено</span>' : ''}
+                        </div>
+
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${task.progress}%"></div>
+                        </div>
+                        <div class="progress-percentage">${Math.round(task.progress)}%</div>
+                        
+                        <div class="task-controls">
+                            <button class="control-btn increment-btn" onclick="taskManager.updateProgress(${task.id}, true)" 
+                                    ${task.progress === 100 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                                + Этап
+                            </button>
+                            <button class="control-btn decrement-btn" onclick="taskManager.updateProgress(${task.id}, false)" 
+                                    ${task.completedStages === 0 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>
+                                - Этап
+                            </button>
+                            <button class="control-btn edit-btn" onclick="taskManager.openEditModal(${task.id})">
+                                ✏️ Редактировать
+                            </button>
+                            <button class="control-btn delete-btn" onclick="taskManager.deleteTask(${task.id})">
+                                Удалить
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                return taskDiv;
+            }
+
+            updateDeadlineStatusForNewElement(taskDiv, task) {
+                if (task.progress < 100 && task.deadline) {
+                    const now = new Date();
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    const deadline = new Date(task.deadline);
+                    
+                    if (deadline < today) {
+                        taskDiv.classList.add('deadline-critical');
+                    } else if ((deadline - today) / (1000 * 60 * 60 * 24) <= 3) {
+                        taskDiv.classList.add('deadline-warning');
+                    }
+                }
+            }
+
+            getCategoryName(category) {
+                const categories = {
+                    work: 'Работа',
+                    personal: 'Личное',
+                    health: 'Здоровье',
+                    education: 'Обучение'
+                };
+                return categories[category] || category;
+            }
+
+            // Замени старую функцию getPriorityName на эту:
+            getPriorityName(priority) {
+                const priorities = {
+                    high: 'Высокий',
+                    medium: 'Средний',
+                    low: 'Низкий',
+                    urgent: 'Наивысший'
+                };
+                return priorities[priority] || priority;
+            }
+
+            // Замени старую функцию formatDeadline на эту:
+            formatDeadline(deadline, progress, task) {
+                if (progress === 100) {
+                    return 'Выполнено';
+                }
+                
+                const now = new Date();
+                const taskDate = new Date(deadline);
+                const diffTime = taskDate - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays <= 2 && diffDays >= 0 && task) {
+                    if (task.priority !== 'urgent') {
+                        task.priority = 'urgent';
+                        this.saveTasks();
+                    }
+                }
+
+                if (diffDays === 0) return 'Сегодня';
+                if (diffDays === 1) return 'Завтра';
+                if (diffDays === -1) return 'Вчера';
+                if (diffDays < 0) return `Просрочено на ${Math.abs(diffDays)} д.`;
+                
+                return `Через ${diffDays} д.`;
+            }
+
+            updateStats() {
+                const totalTasks = this.tasks.length;
+                const completedTasks = this.tasks.filter(task => task.progress === 100).length;
+                const totalProgress = totalTasks > 0 
+                    ? Math.round(this.tasks.reduce((sum, task) => sum + task.progress, 0) / totalTasks)
+                    : 0;
+
+                document.getElementById('totalProgress').textContent = `${totalProgress}%`;
+                document.getElementById('totalTasks').textContent = totalTasks;
+                document.getElementById('completedTasks').textContent = completedTasks;
+                document.getElementById('activeTasks').textContent = totalTasks - completedTasks;
+            }
+
+            showCompletionNotification(taskName) {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #4CAF50, #45a049);
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                    max-width: 300px;
+                `;
+                
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.2em;">🎉</span>
+                        <div>
+                            <strong>Задача завершена!</strong>
+                            <div style="font-size: 0.9em;">"${taskName}"</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+
+            exportData() {
+                const data = JSON.stringify(this.tasks, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'tasks-backup.json';
+                a.click();
+                
+                URL.revokeObjectURL(url);
+            }
+
+            importData() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = (event) => {
+                        try {
+                            const importedTasks = JSON.parse(event.target.result);
+                            if (Array.isArray(importedTasks)) {
+                                this.tasks = importedTasks;
+                                this.saveTasks();
+                                this.renderTasks();
+                                this.updateStats();
+                                alert('Данные успешно импортированы!');
+                            }
+                        } catch (error) {
+                            alert('Ошибка при импорте данных: неверный формат файла');
+                        }
+                    };
+                    
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            }
+        }
+
+        // Инициализация менеджера задач
+        const taskManager = new TaskManager();
+
+        // Добавляем стили для анимаций уведомлений
+        document.addEventListener('DOMContentLoaded', function() {
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
