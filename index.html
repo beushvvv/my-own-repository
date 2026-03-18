@@ -1,12 +1,230 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Мои сайты</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои проекты</title>
+    <style>
+        /* Современный сброс стилей */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 50px 40px;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 20px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 25px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: transparent;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* Иконки для карточек (эмодзи как временное решение) */
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .card-link {
+            color: #667eea;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.3s ease;
+        }
+
+        .card:hover .card-link {
+            gap: 10px;
+            color: #764ba2;
+        }
+
+        .card-link::after {
+            content: '→';
+            font-size: 1.2rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 640px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Анимация загрузки */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
 </head>
 <body>
-    <h1>Сайты готовы!</h1>
-        <p><a href="manage_tasks/" target="_blank">Менеджер задач</a></p>
-        <p><a href="rest_manager/" target="_blank">Менеджер отдыха</a></p>
-        <p><a href="manager_balanced/" target="_blank">Менеджер менеджеров</a></p>
+    <div class="container">
+        <h1>Мои сайты</h1>
+        <div class="subtitle">Все проекты в одном месте</div>
+        
+        <div class="cards-grid">
+            <!-- Карточка менеджера задач -->
+            <a href="manage_tasks/" target="_blank" class="card">
+                <div class="card-icon">✅</div>
+                <h2 class="card-title">Менеджер задач</h2>
+                <p class="card-description">Организуйте свои задачи и повышайте продуктивность</p>
+                <span class="card-link">Перейти</span>
+            </a>
+
+            <!-- Карточка менеджера отдыха -->
+            <a href="rest_manager/" target="_blank" class="card">
+                <div class="card-icon">🌴</div>
+                <h2 class="card-title">Менеджер отдыха</h2>
+                <p class="card-description">Планируйте отдых и находите время для релаксации</p>
+                <span class="card-link">Перейти</span>
+            </a>
+
+            <!-- Карточка менеджера менеджеров -->
+            <a href="manager_balanced/" target="_blank" class="card">
+                <div class="card-icon">⚖️</div>
+                <h2 class="card-title">Менеджер менеджеров</h2>
+                <p class="card-description">Баланс между работой и отдыхом под контролем</p>
+                <span class="card-link">Перейти</span>
+            </a>
+        </div>
+    </div>
 </body>
 </html>
