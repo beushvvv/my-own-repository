@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Спасибо! — beush3v</title>
+    <style>
+        /* Дополнительные стили для страницы благодарности */
+        .thanks-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            padding: 20px;
+        }
+
+        .thanks-card {
+            background: white;
+            border-radius: 25px;
+            padding: 60px 50px;
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .thanks-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1.5s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .thanks-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+        }
+
+        .thanks-subtitle {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .thanks-subtitle strong {
+            color: #f12711;
+        }
+
+        .thanks-button {
+            display: inline-block;
+            padding: 12px 35px;
+            background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .thanks-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(241, 39, 17, 0.35);
+        }
+
+        .thanks-socials {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .thanks-socials p {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .thanks-socials .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .thanks-socials .social-link {
+            padding: 8px 18px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .thanks-socials .social-link:hover {
+            background: #f5af19;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .thanks-card {
+                padding: 40px 25px;
+            }
+            .thanks-title {
+                font-size: 24px;
+            }
+            .thanks-icon {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ХЕДЕР СВЕРХУ -->
+    <header>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">Главная</a>
+            <a href="about.html" class="nav-link">Обо мне</a>
+            <a href="contact.html" class="nav-link active">Контакты</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="thanks-container">
+            <div class="thanks-card">
+                <div class="thanks-icon">✉️</div>
+                <h1 class="thanks-title">Спасибо!</h1>
+                <p class="thanks-subtitle">
+                    Ваше сообщение успешно отправлено <strong>beush3v</strong>.<br>
+                    Я свяжусь с вами в ближайшее время.
+                </p>
+                <a href="index.html" class="thanks-button">🏠 Вернуться на главную</a>
+
+                <div class="thanks-socials">
+                    <p>Будьте на связи:</p>
+                    <div class="social-links">
+                        <a href="https://vk.me/beushvvv" target="_blank" rel="noopener noreferrer" class="social-link">📱 VK</a>
+                        <a href="https://t.me/beushvvv" target="_blank" rel="noopener noreferrer" class="social-link">💬 Telegram</a>
+                        <a href="mailto:beushvvv@gmail.com" class="social-link">📧 Email</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 beush3v. Все права защищены.</p>
+    </footer>
+</body>
+</html>
