@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Hardtekk / Hardstyle — Плейлист</title>
+    
+    <!-- Google Fonts: агрессивный, техно-стиль -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="playlist.css">
+</head>
+<body>
+
+    <!-- ФОНОВЫЕ ЛАЗЕРЫ -->
+    <div class="bg-animation">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- ОСНОВНОЙ БЛОК -->
+    <div class="main-container">
+
+        <!-- ХЕДЕР -->
+        <div class="header">
+            <div class="sub">⚡ Harder, Better, Faster, Stronger ⚡</div>
+            <h1>Hardtekk</h1>
+            <p class="tagline">🎧 <strong>хард</strong> в каждой ноте · <strong>энергия</strong> в каждом ударе</p>
+        </div>
+
+        <!-- ПЛЕЙЛИСТ VK -->
+        <div class="playlist-wrapper">
+            <div id="vk_playlist_649946952_50"></div>
+        </div>
+
+        <!-- ИНФО / ССЫЛКИ -->
+        <div class="info-row">
+            <div class="tags">
+                <span>#hardtekk</span>
+                <span>#hardstyle</span>
+                <span>#rawstyle</span>
+                <span>#uptempo</span>
+            </div>
+            <a href="https://vk.com/music/playlist/649946952_50" target="_blank" rel="noopener noreferrer" class="vk-link">
+                ▶ Открыть в VK
+            </a>
+        </div>
+
+        <div class="footer-note">
+            <span>✦</span>  только хардкор <span>✦</span>
+        </div>
+    </div>
+
+    <!-- VK API -->
+    <script type="text/javascript" src="https://vk.com/js/api/openapi.js?173"></script>
+    <script type="text/javascript">
+        (function() {
+            VK.Widgets.Playlist("vk_playlist_649946952_50", 649946952, 50, '7e3d5b18a26b61ae2c');
+        }());
+    </script>
+
+</body>
+</html>
