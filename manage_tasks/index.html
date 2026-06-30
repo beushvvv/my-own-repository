@@ -165,8 +165,15 @@
             flex: 1;
         }
 
+        .btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block; /* Или block, если нужно */
+            width: 100%; /* Чтобы обёртка была такой же ширины, как кнопка */
+        }
+
         .add-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #2ce269, #0c7c28);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -175,17 +182,41 @@
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(44, 226, 105, 0.4);
+            transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .add-btn:active {
+            transform: scale(0.90) translateY(0px) !important;
+            box-shadow: 0 2px 10px rgba(44, 226, 105, 0.3);
         }
 
         .add-btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(44, 226, 105, 0.6);
         }
 
         .add-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none; /* Чтобы волна не перехватывала события мыши */
+            z-index: 0;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
 
         .tasks-container {
@@ -541,22 +572,239 @@
                 padding: 15px;
             }
         }
+
+        /* ===== ТЁМНАЯ ТЕМА (спокойная, без кислоты) ===== */
+        body.dark-theme {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+
+        body.dark-theme .task-card {
+            background: #2d2d44;
+            border: 1px solid #3d3d5c;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-theme .task-image.fallback {
+            background: #3d3d5c;
+            color: #8a8ac0;
+            border-color: #4a4a6a;
+        }
+
+        body.dark-theme .task-image {
+            background: #3d3d5c;
+            border-color: #4a4a6a;
+        }
+
+        /* Категории — приглушённые пастельные тона */
+        body.dark-theme .category-work { 
+            background: rgba(25, 118, 210, 0.25); 
+            color: #8ab4f8; 
+        }
+        body.dark-theme .category-personal { 
+            background: rgba(123, 31, 162, 0.25); 
+            color: #b39ddb; 
+        }
+        body.dark-theme .category-health { 
+            background: rgba(56, 142, 60, 0.25); 
+            color: #81c784; 
+        }
+        body.dark-theme .category-education { 
+            background: rgba(245, 124, 0, 0.25); 
+            color: #ffb74d; 
+        }
+
+        /* Приоритеты — приглушённые, без кричащих цветов */
+        body.dark-theme .priority-high { 
+            background: rgba(255, 71, 87, 0.25); 
+            color: #ef9a9a; 
+        }
+        body.dark-theme .priority-medium { 
+            background: rgba(255, 165, 2, 0.25); 
+            color: #ffcc80; 
+        }
+        body.dark-theme .priority-low { 
+            background: rgba(46, 213, 115, 0.25); 
+            color: #81c784; 
+        }
+        body.dark-theme .priority-urgent { 
+            background: rgba(255, 0, 0, 0.2); 
+            color: #ef5350; 
+        }
+
+        /* Прогресс-бар — спокойный градиент */
+        body.dark-theme .progress-bar {
+            background: #3d3d5c;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        body.dark-theme .progress-fill {
+            background: linear-gradient(90deg, #4fc3f7, #7c8cf0);
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Тексты — мягкие и читаемые */
+        body.dark-theme .task-title {
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .task-deadline,
+        body.dark-theme .task-progress-text,
+        body.dark-theme .progress-percentage {
+            color: #b0b0d0;
+        }
+
+        body.dark-theme .task-completed {
+            background: #2a2a3e;
+            opacity: 0.75;
+        }
+
+        body.dark-theme .task-completed .task-title {
+            color: #8888aa;
+        }
+
+        /* Формы, фильтры, карточки статистики */
+        body.dark-theme .add-task-form,
+        body.dark-theme .filters,
+        body.dark-theme .stat-card {
+            background: #2d2d44;
+            color: #e0e0e0;
+            border: 1px solid #3d3d5c;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-theme .stat-card h3 {
+            color: #a0a0c0;
+        }
+
+        body.dark-theme .stat-value {
+            color: #b0b0e0;
+        }
+
+        body.dark-theme .form-group label,
+        body.dark-theme .filter-group label {
+            color: #b0b0d0;
+        }
+
+        body.dark-theme .form-group input,
+        body.dark-theme .form-group select,
+        body.dark-theme .filter-select {
+            background: #1e1e32;
+            color: #e0e0e0;
+            border-color: #3d3d5c;
+        }
+
+        body.dark-theme .form-group input:focus,
+        body.dark-theme .form-group select:focus {
+            border-color: #667eea;
+        }
+
+        body.dark-theme .action-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #d0d0e0;
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark-theme .action-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark-theme .edit-modal-content {
+            background: #2d2d44;
+            color: #e0e0e0;
+            border: 1px solid #3d3d5c;
+        }
+
+        body.dark-theme .edit-modal-content h3 {
+            color: #e0e0e0;
+        }
+
+        body.dark-theme .empty-state {
+            color: #b0b0d0;
+        }
+
+        /* Кнопка "Добавить задачу" — зелёная, но спокойная */
+        body.dark-theme .add-btn {
+            background: linear-gradient(135deg, #2d9e5a, #1a7a3a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(45, 158, 90, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-theme .add-btn:hover {
+            background: linear-gradient(135deg, #3aae6a, #228a4a);
+            box-shadow: 0 6px 25px rgba(45, 158, 90, 0.4);
+            transform: translateY(-2px);
+        }
+
+        body.dark-theme .add-btn:active {
+            background: linear-gradient(135deg, #208e4a, #146a30);
+            box-shadow: 0 2px 10px rgba(45, 158, 90, 0.15);
+            transform: scale(0.95) !important;
+        }
+        /* Кнопки действий — спокойные цвета */
+        body.dark-theme .edit-btn {
+            background: rgba(74, 144, 226, 0.5);
+            color: white;
+        }
+
+        body.dark-theme .edit-btn:hover {
+            background: rgba(74, 144, 226, 0.7);
+        }
+
+        body.dark-theme .delete-btn {
+            background: rgba(255, 71, 87, 0.5);
+            color: white;
+        }
+
+        body.dark-theme .delete-btn:hover {
+            background: rgba(255, 71, 87, 0.7);
+        }
+
+        body.dark-theme .increment-btn {
+            background: rgba(76, 175, 80, 0.5);
+            color: white;
+        }
+
+        body.dark-theme .increment-btn:hover {
+            background: rgba(76, 175, 80, 0.7);
+        }
+
+        body.dark-theme .decrement-btn {
+            background: rgba(255, 107, 107, 0.5);
+            color: white;
+        }
+
+        body.dark-theme .decrement-btn:hover {
+            background: rgba(255, 107, 107, 0.7);
+        }
+
+        body.dark-theme .header h1,
+        body.dark-theme .header p {
+            color: #e0e0e0;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <a href="../rest_manager/" style="display: inline-block; margin: 10px; padding: 10px 20px; background: #0288d1; color: white; text-decoration: none; border-radius: 5px;">
-            <i class="fas fa-couch"></i> Перейти в менеджер отдыха
-            </a>
             <h1>📋 Менеджер задач</h1>
+            <!-- Кнопка переключения темы -->
+
             <p>Отслеживайте прогресс по вашим задачам в реальном времени</p>
             <p style="font-size: 0.9em; opacity: 0.8; margin-top: 5px; color: rgba(255,255,255,0.9);">
                 💡 Не забывайте периодически экспортировать данные для создания резервных копий
             </p>
+            <button id="themeToggle" class="action-btn" style="margin-top: 10px;">
+                🌙 Тёмная тема
+            </button>
             <div class="header-actions">
                 <button class="action-btn" onclick="taskManager.exportData()">📤 Экспорт данных</button>
                 <button class="action-btn" onclick="taskManager.importData()">📥 Импорт данных</button>
+                <button class="action-btn" onclick="taskManager.clearAllTasks()">🗑️ Очистить всё</button>
             </div>
         </div>
 
@@ -576,6 +824,10 @@
             <div class="stat-card">
                 <h3>Активных</h3>
                 <div class="stat-value" id="activeTasks">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Средний прогресс</h3>
+                <div class="stat-value" id="averageProgress">0%</div>
             </div>
         </div>
 
@@ -664,8 +916,9 @@
                 <label for="taskDeadline">Срок выполнения</label>
                 <input type="date" id="taskDeadline">
             </div>
-            
-            <button type="submit" class="add-btn" id="addBtn">Добавить задачу</button>
+            <div class="btn-wrapper">
+                <button type="button" class="add-btn" id="addBtn">Добавить задачу</button>
+            </div>
         </form>
 
         <div class="tasks-container" id="tasksContainer">
@@ -733,6 +986,13 @@
                 this.bindEvents();
                 this.renderTasks();
                 this.updateStats();
+
+                // Восстанавливаем тему
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                    document.getElementById('themeToggle').textContent = '☀️ Светлая тема';
+                }
                 
                 // Устанавливаем минимальную дату для дедлайна
                 const today = new Date().toISOString().split('T')[0];
@@ -752,14 +1012,52 @@
                     }
                 });
             }
-
+            toggleTheme() {
+                const body = document.body;
+                const btn = document.getElementById('themeToggle');
+                
+                body.classList.toggle('dark-theme');
+                
+                // Меняем текст и иконку кнопки
+                if (body.classList.contains('dark-theme')) {
+                    btn.textContent = '☀️ Светлая тема';
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    btn.textContent = '🌙 Тёмная тема';
+                    localStorage.setItem('theme', 'light');
+                }
+            }
             bindEvents() {
+                // 1. Добавление задачи через форму (Enter в полях ввода)
                 document.getElementById('taskForm').addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.addTask();
                 });
 
-                // События для фильтров
+                // 2. Добавление задачи через клик по обёртке кнопки (с эффектом волны)
+                const wrapper = document.querySelector('.btn-wrapper');
+                if (wrapper) { // Проверяем, что обёртка существует
+                    wrapper.addEventListener('click', (e) => {
+                        this.addTask(); // Добавляем задачу
+
+                        // Эффект волны
+                        const ripple = document.createElement('span');
+                        ripple.className = 'ripple';
+                        const rect = wrapper.getBoundingClientRect();
+                        ripple.style.left = (e.clientX - rect.left) + 'px';
+                        ripple.style.top = (e.clientY - rect.top) + 'px';
+                        ripple.style.width = ripple.style.height = '20px';
+                        wrapper.appendChild(ripple);
+                        setTimeout(() => ripple.remove(), 600);
+                    });
+                }
+
+                // Кнопка переключения темы
+                document.getElementById('themeToggle').addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+
+                // 3. События для фильтров
                 document.getElementById('filterCategory').addEventListener('change', () => this.renderTasks());
                 document.getElementById('filterPriority').addEventListener('change', () => this.renderTasks());
                 document.getElementById('sortBy').addEventListener('change', () => this.renderTasks());
@@ -767,6 +1065,7 @@
             }
 
             addTask() {
+                console.log('🟢 Функция addTask() вызвана!');
                 if (this.tasks.length >= this.maxTasks) {
                     alert(`Максимальное количество задач: ${this.maxTasks}`);
                     return;
@@ -811,7 +1110,7 @@
                     deadline: deadline || null,
                     createdAt: new Date().toISOString()
                 };
-
+                console.log('📝 Создана задача:', task);
                 this.tasks.push(task);
                 this.saveTasks();
                 this.renderTasks();
@@ -1173,7 +1472,7 @@
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${task.progress}%"></div>
                         </div>
-                        <div class="progress-percentage">${Math.round(task.progress)}%</div>
+                        <div class="progress-percentage">📊 ${Math.round(task.progress)}%</div>
                         
                         <div class="task-controls">
                             <button class="control-btn increment-btn" onclick="taskManager.updateProgress(${task.id}, true)" 
@@ -1224,10 +1523,10 @@
             // Замени старую функцию getPriorityName на эту:
             getPriorityName(priority) {
                 const priorities = {
-                    high: 'Высокий',
-                    medium: 'Средний',
-                    low: 'Низкий',
-                    urgent: 'Наивысший'
+                    high: '🔴 Высокий',
+                    medium: '🟡 Средний',
+                    low: '🟢 Низкий',
+                    urgent: '⛔ Наивысший'
                 };
                 return priorities[priority] || priority;
             }
@@ -1264,11 +1563,15 @@
                 const totalProgress = totalTasks > 0 
                     ? Math.round(this.tasks.reduce((sum, task) => sum + task.progress, 0) / totalTasks)
                     : 0;
+                const averageProgress = totalTasks > 0 
+                    ? Math.round(this.tasks.reduce((sum, task) => sum + task.progress, 0) / totalTasks)
+                    : 0;
 
                 document.getElementById('totalProgress').textContent = `${totalProgress}%`;
                 document.getElementById('totalTasks').textContent = totalTasks;
                 document.getElementById('completedTasks').textContent = completedTasks;
                 document.getElementById('activeTasks').textContent = totalTasks - completedTasks;
+                document.getElementById('averageProgress').textContent = `${averageProgress}%`;
             }
 
             showCompletionNotification(taskName) {
@@ -1350,6 +1653,21 @@
                 };
                 
                 input.click();
+            }
+
+            clearAllTasks() {
+                if (this.tasks.length === 0) {
+                    alert('📭 Задач и так нет!');
+                    return;
+                }
+                
+                if (confirm('⚠️ Вы уверены, что хотите удалить ВСЕ задачи? Это действие нельзя отменить!')) {
+                    this.tasks = [];
+                    this.saveTasks();
+                    this.renderTasks();
+                    this.updateStats();
+                    console.log('🗑️ Все задачи удалены');
+                }
             }
         }
 
